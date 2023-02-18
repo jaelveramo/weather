@@ -52,10 +52,16 @@ let loadWeekForecastData = () => {
         </div>
       </li>`;
     };
-    
+
     listaForescastWeek[0].innerHTML = template_forecast;
 };
 
+document.addEventListener("DOMContentLoaded", (event) => {
+    loadDayForecastData();
 
-loadDayForecastData();
-loadWeekForecastData();
+    let element = document.getElementById("loadinfo");
+
+    element.addEventListener('click', (event) => {
+        loadWeekForecastData();
+    });
+});
