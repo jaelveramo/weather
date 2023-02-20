@@ -1,8 +1,9 @@
 import { weather_data } from './data.js';
 
-let loadDayForecastData = () => {
-    let [ciudad1] = weather_data;
-	let {city_code, city, date, maxtemperature, mintemperature, cloudiness, wind, rainfall, forecast_today, ...restoDeWeatherData} = ciudad1;
+let loadDayForecastData = (ciudad) => {
+    //let [ciudad] = weather_data;
+    let arrciudad = weather_data.filter(elemento => elemento.city === ciudad);
+	let {city_code, city, date, maxtemperature, mintemperature, cloudiness, wind, rainfall, forecast_today, ...restoDeWeatherData} = arrciudad[0];
 
     document.getElementById('city').innerHTML = city;
     document.getElementById('date').innerHTML = date;
@@ -32,16 +33,18 @@ let loadDayForecastData = () => {
 };
 
 let loadWeekForecastData = () => {
-    let [ciudad1] = weather_data;
-	let {city_code, city, date, maxtemperature, mintemperature, cloudiness, wind, rainfall, forecast_today, forecast_week, ...restoDeWeatherData} = ciudad1;
+    //let [ciudad] = weather_data;
+    let ciudad = document.getElementById("dropdownMenuButton").value;
+    let arrciudad = weather_data.filter(elemento => elemento.city === ciudad);
+	let {city_code, city, date, maxtemperature, mintemperature, cloudiness, wind, rainfall, forecast_today, forecast_week, ...restoDeWeatherData} = arrciudad[0];
 
-    let listaForescastWeek = document.getElementsByClassName('list-group');
-    let template_forecast = '';
+    let listaPronosticoSemana = document.getElementsByClassName('list-group');
+    let plantilla_pronostico = '';
 
     for (let i = 0; i < forecast_week.length; i++) {
         let {day, text, date, temperature: {min, max}, icon} = forecast_week[i];
 
-        template_forecast += `<li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+        plantilla_pronostico += `<li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
         <div class="d-flex flex-column">
           <h6 class="mb-1 text-dark font-weight-bold text-sm">${text}</h6>
           <span class="text-xs">${date}</span>
@@ -53,15 +56,34 @@ let loadWeekForecastData = () => {
       </li>`;
     };
 
-    listaForescastWeek[0].innerHTML = template_forecast;
+    listaPronosticoSemana[0].innerHTML = plantilla_pronostico;
+s};
+
+let cargaCiudades = () => {
+    let plantilla_ciudades = `<option value="" selected disabled hidden>Seleccione una ciudad</option>`;
+    let elementoDropDown = document.getElementById("dropdownMenuButton");
+
+    for (let elemento of weather_data) {
+        plantilla_ciudades += `<option class="dropdown-item" value="${elemento.city}">${elemento.city}</option>`;
+    };
+
+    elementoDropDown.innerHTML = plantilla_ciudades;
 };
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    loadDayForecastData();
+    cargaCiudades();
+});
 
-    let element = document.getElementById("loadinfo");
+let elementoDropDown = document.getElementById("dropdownMenuButton");
 
-    element.addEventListener('click', (event) => {
-        loadWeekForecastData();
-    });
+elementoDropDown.addEventListener('change', (event) => {
+    let ciudad = event.target.value
+    document.getElementsByClassName('list-group')[0].innerHTML="";
+    loadDayForecastData(ciudad);
+});
+
+let elementoCargar = document.getElementById("loadinfo");
+
+elementoCargar.addEventListener('click', (event) => {
+    loadWeekForecastData();
 });
